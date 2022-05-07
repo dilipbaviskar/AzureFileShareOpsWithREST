@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.service.AzureBlobAdapterService;
 
@@ -51,6 +55,23 @@ public class REISAzureFileShareController {
 		return ResponseEntity.ok(created);
 	}
 
+ 
+	@PostMapping("/")
+	public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes)
+	        throws MultipartException, IllegalStateException {
+
+	    if (file != null && file.getContentType() != null && !file.getContentType().toLowerCase().startsWith("image"))
+	        throw new MultipartException("not img");
+
+	    // code to actual file storage
+	    //storageService.store(file);
+	    redirectAttributes.addFlashAttribute("message",
+	            "You successfully uploaded " + file.getOriginalFilename() + "!");
+
+	    return "redirect:/";
+	}
+	   
+	    
 //	@PostMapping
 //	public ResponseEntity upload(@RequestParam MultipartFile multipartFile) {
 //		URI url = azureBlobAdapter.upload(multipartFile);
